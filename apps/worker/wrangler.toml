@@ -1,19 +1,16 @@
-name = "x-harness-worker"
+name = "kossan-x"
 main = "src/index.ts"
 compatibility_date = "2024-12-01"
 workers_dev = true
-
-# Set via: wrangler secret put API_KEY
-# Set via: wrangler secret put X_ACCESS_TOKEN
-# Set via: wrangler secret put X_REFRESH_TOKEN
+account_id = "9a3ef399a2b9e3a9def76d0626695566"
 
 [vars]
-WORKER_URL = "https://x-harness-worker.workers.dev"
+WORKER_URL = "https://kossan-x.liafis009.workers.dev"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "x-harness"
-database_id = "YOUR_D1_DATABASE_ID"
+database_name = "kossan-x-db"
+database_id = "72745f1f-8611-490f-a4bf-ee695083cefe"
 
 [triggers]
 crons = ["*/5 * * * *"]
