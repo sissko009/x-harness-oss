@@ -6,6 +6,14 @@ export async function processScheduledPosts(db: D1Database, xClient: XClient, xA
   const duePosts = xAccountId ? allDuePosts.filter((p) => p.x_account_id === xAccountId) : allDuePosts;
 
   for (const post of duePosts) {
+    // Safety: skip mojibake posts (3+ consecutive '?' characters indicates
+    // UTF-8 encoding failure during insertion). Mark as 'failed' so they
+    // are not retried and do not pollute the account.
+    if (/\?{3,}/.test(post.text)) {
+      console.error(`Skipping mojibake scheduled post ${post.id}: text contains corrupted characters`);
+      await updateScheduledPostStatus(db, post.id, 'failed');
+      continue;
+    }
     try {
       const tweet = await xClient.createTweet({
         text: post.text,

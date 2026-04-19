@@ -107,9 +107,14 @@ app.delete('/api/line-connections/:id', async (c) => {
 app.notFound((c) => c.json({ success: false, error: 'Not found' }, 404));
 
 async function getSettingBool(db: D1Database, key: string, defaultValue = false): Promise<boolean> {
-  const row = await db.prepare('SELECT value FROM settings WHERE key = ?').bind(key).first<{ value: string }>();
-  if (!row) return defaultValue;
-  return row.value === 'true' || row.value === '1';
+  try {
+    const row = await db.prepare('SELECT value FROM settings WHERE key = ?').bind(key).first<{ value: string }>();
+    if (!row) return defaultValue;
+    return row.value === 'true' || row.value === '1';
+  } catch (err) {
+    console.error(`getSettingBool(${key}) failed, returning default=${defaultValue}:`, err);
+    return defaultValue;
+  }
 }
 
 async function scheduled(
